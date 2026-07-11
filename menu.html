@@ -408,5 +408,85 @@
       </p>
     </div>
   </footer>
+
+    <div class="photo-modal" id="foodPhotoModal" role="dialog" aria-modal="true" aria-labelledby="foodPhotoCaption" aria-hidden="true">
+    <div class="photo-modal-content">
+      <link rel="stylesheet" href="css/styleMenuPics.css" />
+      <button class="photo-modal-close" type="button" aria-label="Close food photo">&times;</button>
+      <img class="photo-modal-image" id="foodPhotoImage" src="" alt="" />
+      <p class="photo-modal-caption" id="foodPhotoCaption"></p>
+    </div>
+  </div>
+
+  <script>
+    // Add or remove dishes here. The key must exactly match the menu item name.
+    // Store the photos in images/MenuPics/ or update the paths below.
+    const menuPhotos = {
+      "Calamari": "images/MenuPics/Appetizer/Calamari.jpg",
+      "Ceviche" : "images/MenuPics/Appetizer/CevicheChips2.jpg",
+      "Mushroom Burger" : "images/MenuPics/Burgers/MushroomBurger.jpg",
+      "Chipotle Chicken" : "images/MenuPics/Burgers/ChipotleChicken.jpg",
+      "Fresh Oysters Dozen" : "images/MenuPics/Oysters/FreshOysters12ct.jpg",
+      "Stuffed Shrimp (4)": "images/MenuPics/Fried/StuffedShrimp4ct.jpg",
+      "Fried Shrimp (8)": "images/MenuPics/Fried/FriedShrimp8ct.jpg",
+      "Stuffed Flounder": "images/MenuPics/Grilled/StuffedFlounder.jpg",
+      "Asian Tuna": "images/MenuPics/Grilled/AsianTuna.jpg"
+    };
+
+    const modal = document.getElementById("foodPhotoModal");
+    const modalImage = document.getElementById("foodPhotoImage");
+    const modalCaption = document.getElementById("foodPhotoCaption");
+    const closeButton = modal.querySelector(".photo-modal-close");
+    let lastFocusedElement = null;
+
+    function openFoodPhoto(itemName, imagePath) {
+      lastFocusedElement = document.activeElement;
+      modalImage.src = imagePath;
+      modalImage.alt = itemName;
+      modalCaption.textContent = itemName;
+      modal.classList.add("is-open");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+      closeButton.focus();
+    }
+
+    function closeFoodPhoto() {
+      modal.classList.remove("is-open");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+      modalImage.src = "";
+      if (lastFocusedElement) lastFocusedElement.focus();
+    }
+
+    document.querySelectorAll(".menu-row h3").forEach((heading) => {
+      const itemName = heading.textContent.trim();
+      const imagePath = menuPhotos[itemName];
+
+      if (!imagePath) return;
+
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "menu-photo-link";
+      button.setAttribute("aria-label", `View photo of ${itemName}`);
+      button.innerHTML = `<span>${itemName}</span><span class="photo-icon" aria-hidden="true">📷</span>`;
+      button.addEventListener("click", () => openFoodPhoto(itemName, imagePath));
+
+      heading.textContent = "";
+      heading.appendChild(button);
+    });
+
+    closeButton.addEventListener("click", closeFoodPhoto);
+
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) closeFoodPhoto();
+    });
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && modal.classList.contains("is-open")) {
+        closeFoodPhoto();
+      }
+    });
+  </script>
+
 </body>
 </html>
